@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int dieValue = 0;
   final scoreWin = 100;
   bool terminaTurno = false;
-  List<Map<String,dynamic>> players = [
+  List<Map<String, dynamic>> players = [
     {"value": 0, "tittle": "Computadora"},
     {"value": 1, "tittle": "Jugador"},
   ];
@@ -54,20 +54,31 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _mostrarAlerta(BuildContext context, String mensaje) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(mensaje),
-            content: Text(mensaje),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text("Aceptar"),
-              ),
-            ],
-          );
-          },);
-    }
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(mensaje),
+          content: Text(mensaje),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  scorePlayer = 0;
+                  scoreComputer = 0;
+                  dieValue = 0;
+                  turnComputer = false;
+                  jugador = 1;
+                });
+              },
+              child: const Text("Aceptar"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _mostrarAlertaPig(BuildContext context) {
     showDialog(
       context: context,
@@ -79,35 +90,33 @@ class _MyHomePageState extends State<MyHomePage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                setState(() {
-                  scorePlayer=0;
-                  scoreComputer=0;
-                  dieValue = 0;
-                  turnComputer = false;
-                  jugador = 1;
-                });
               },
               child: const Text("Aceptar"),
             ),
           ],
         );
-      },);
+      },
+    );
   }
 
-  void winner(){
-    if(turnComputer){
-      if(scoreComputer>=scoreWin){
-          _mostrarAlerta(context, "Gano la computadora");
+  void winner() {
+    if (turnComputer) {
+      if (scoreComputer >= scoreWin) {
+        setState(() {
+          turnComputer = false;
+        });
+        _mostrarAlerta(context, "Gano la computadora");
       }
-    }else{
-      if(scorePlayer>=scoreWin){
+    } else {
+      if (scorePlayer >= scoreWin) {
+        turnComputer = false;
         _mostrarAlerta(context, "Felicidades🥳, Ganaste");
       }
     }
   }
 
   void endTurn() {
-    if(!terminaTurno){
+    if (!terminaTurno) {
       return;
     }
     if (turnComputer) {
@@ -116,6 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
         winner();
         turnComputer = !turnComputer;
         jugador = 1;
+
       });
     } else {
       setState(() {
@@ -129,13 +139,14 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       dieValue = 0;
       turnScore = 0;
+      terminaTurno = false;
     });
   }
 
   void shakeDice() {
     terminaTurno = true;
     int random = Random().nextInt(6) + 1;
-    if(turnComputer && (turnScore+random)>=20 ){
+    if (turnComputer && (turnScore + random) >= 20) {
       setState(() {
         endTurn();
         return;
@@ -192,7 +203,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   child: Center(
-                      child: Text(scorePlayer.toString(), style: const TextStyle(fontSize: 20))),
+                      child: Text(scorePlayer.toString(),
+                          style: const TextStyle(fontSize: 20))),
                 ),
                 const Text("Jugador 1"),
               ],
@@ -281,7 +293,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   child: Center(
-                      child: Text(scoreComputer.toString(), style: const TextStyle(fontSize: 20))),
+                      child: Text(scoreComputer.toString(),
+                          style: const TextStyle(fontSize: 20))),
                 ),
                 const Text("Jugador 2"),
               ],
